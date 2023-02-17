@@ -1,3 +1,3 @@
-module com.github.lc.oss.commons.util {
-    exports com.github.lc.oss.commons.util;
+module io.github.lc.oss.commons.util {
+    exports io.github.lc.oss.commons.util;
 }
