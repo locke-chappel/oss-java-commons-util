@@ -12,7 +12,7 @@
     <version>1.0.10</version>
     <name>${project.artifactId}</name>
     <description>Generic Java Utility Classes</description>
-    <url>https://github.com/locke-chappel/oss-commons-util</url>
+    <url>https://github.com/locke-chappel/oss-java-commons-util</url>
 
     <licenses>
         <license>
