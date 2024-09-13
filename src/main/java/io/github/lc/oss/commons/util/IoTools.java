@@ -34,7 +34,8 @@ public class IoTools {
         }
 
         String normalized = filePath.replace("\\", "/");
-        Collection<String> files = IoTools.listDir(filePath, 1, path -> path.toAbsolutePath().toString().replace("\\", "/").endsWith(normalized));
+        Collection<String> files = IoTools.listDir(filePath, 1,
+                path -> path.toAbsolutePath().toString().replace("\\", "/").endsWith(normalized));
         if (files.isEmpty()) {
             return null;
         }
@@ -84,7 +85,6 @@ public class IoTools {
 
     public static List<String> listDir(URI uri, String path, int depth, Predicate<Path> matches) {
         List<String> result = new ArrayList<>();
-        Stream<Path> pathWalker = null;
         try {
             Path myPath;
             if (uri.getScheme().equals("jar")) {
@@ -100,21 +100,18 @@ public class IoTools {
             } else {
                 myPath = Paths.get(uri);
             }
-            pathWalker = Files.walk(myPath, depth);
-            Path p;
-            Iterator<Path> i = pathWalker.iterator();
-            while (i.hasNext()) {
-                p = i.next();
-                if (matches == null || matches.test(p)) {
-                    result.add(p.toAbsolutePath().toString());
+            try (Stream<Path> pathWalker = Files.walk(myPath, depth)) {
+                Path p;
+                Iterator<Path> i = pathWalker.iterator();
+                while (i.hasNext()) {
+                    p = i.next();
+                    if (matches == null || matches.test(p)) {
+                        result.add(p.toAbsolutePath().toString());
+                    }
                 }
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error listing files in directory.", ex);
-        } finally {
-            if (pathWalker != null) {
-                pathWalker.close();
-            }
         }
         return result;
     }
@@ -164,7 +161,8 @@ public class IoTools {
     }
 
     public static byte[] readFileFromDisk(String filePath) {
-        try (InputStream reader = IoTools.readStreamFromDisk(filePath); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (InputStream reader = IoTools.readStreamFromDisk(filePath);
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[4096];
             int len = 0;
             while ((len = reader.read(buffer)) > 0) {
@@ -177,7 +175,8 @@ public class IoTools {
     }
 
     public static byte[] readFileFromJar(String filePath) {
-        try (InputStream input = IoTools.readStreamFromJar(filePath); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (InputStream input = IoTools.readStreamFromJar(filePath);
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             if (input == null) {
                 return null;
             }
